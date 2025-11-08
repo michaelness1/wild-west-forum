@@ -6,10 +6,6 @@ const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// If you have a routes.js file, keep this require.
-// If not, you can remove the next line and the app.use('/', routes) line.
-const routes = require('./routes'); // make sure node/src/routes.js exists
-
 // ----------------------
 // Middleware
 // ----------------------
@@ -28,8 +24,8 @@ app.use(
 );
 
 // Serve static files from node/src/public
-//   -> /css/styles.css
-//   -> /images/desert-wild-west.jpg
+// -> /css/styles.css
+// -> /images/desert-wild-west.jpg
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ----------------------
@@ -39,7 +35,7 @@ app.engine(
   'hbs',
   exphbs.engine({
     extname: '.hbs',
-    defaultLayout: 'main', // uses views/layouts/main.hbs
+    defaultLayout: 'main', // views/layouts/main.hbs
     layoutsDir: path.join(__dirname, 'views', 'layouts'),
     partialsDir: path.join(__dirname, 'views', 'partials'),
   })
@@ -49,16 +45,41 @@ app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 
 // ----------------------
-// Routes
+// Routes (inline)
 // ----------------------
 
-// If you have a routes.js file exporting an Express router:
-app.use('/', routes);
+// Home page
+app.get('/', (req, res) => {
+  res.render('home', { title: 'Home' });
+});
 
-// If you DON'T have a routes.js, comment the line above and instead add e.g.:
-// app.get('/', (req, res) => {
-//   res.render('home', { title: 'Home' });
-// });
+// Forum page
+app.get('/forum', (req, res) => {
+  res.render('forum', { title: 'Forum' });
+});
+
+// New post page
+app.get('/posts/new', (req, res) => {
+  res.render('new-post', { title: 'New Post' });
+});
+
+// Register page
+app.get('/register', (req, res) => {
+  res.render('register', { title: 'Register' });
+});
+
+// Login page
+app.get('/login', (req, res) => {
+  res.render('login', { title: 'Login' });
+});
+
+// 404 fallback
+app.use((req, res) => {
+  res.status(404).render('home', {
+    title: 'Not found',
+    errorMessage: 'Page not found.',
+  });
+});
 
 // ----------------------
 // Start server
