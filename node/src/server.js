@@ -1,71 +1,46 @@
+// node/src/server.js
 const path = require('path');
 const express = require('express');
-const exphbs = require('express-handlebars');
 const session = require('express-session');
+const hbs = require('hbs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ----------------------
-// Middleware
-// ----------------------
-
-// Parse form data and JSON
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-// Sessions (for login / logged-in state)
-app.use(
-  session({
-    secret: 'wild-west-secret-change-me',
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-
-// Serve static files from node/src/public
-// -> /css/styles.css
-// -> /images/desert-wild-west.jpg
-app.use(express.static(path.join(__dirname, 'public')));
-
-// ----------------------
-// Handlebars view engine
-// ----------------------
-app.engine(
-  'hbs',
-  exphbs.engine({
-    extname: '.hbs',
-    defaultLayout: 'main', // views/layouts/main.hbs
-    layoutsDir: path.join(__dirname, 'views', 'layouts'),
-    partialsDir: path.join(__dirname, 'views', 'partials'),
-  })
-);
-
+// ----- View engine (Handlebars) -----
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
+hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 
-// ----------------------
-// Routes (inline)
-// ----------------------
+// ----- Middleware -----
+app.use(express.urlencoded({ extended: true }));
+
+// Static files (CSS, images, client-side JS)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// ----- Simple in-memory "state" -----
+const state = {
+  users: [],
+  posts: [],
+  comments: []
+};
+
+// ----- Routes -----
 
 // Home page
 app.get('/', (req, res) => {
-  res.render('home', { title: 'Home' });
+  res.render('home', {
+    title: 'Wild West Forum',
+    posts: state.posts
+  });
 });
 
 // Forum page
 app.get('/forum', (req, res) => {
-  res.render('forum', { title: 'Forum' });
-});
-
-// New post page
-app.get('/posts/new', (req, res) => {
-  res.render('new-post', { title: 'New Post' });
-});
-
-// Register page
-app.get('/register', (req, res) => {
-  res.render('register', { title: 'Register' });
+  res.render('forum', {
+    title: 'Forum',
+    posts: state.posts
+  });
 });
 
 // Login page
@@ -73,17 +48,24 @@ app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
 
-// 404 fallback
-app.use((req, res) => {
-  res.status(404).render('home', {
-    title: 'Not found',
-    errorMessage: 'Page not found.',
-  });
+// Register page
+app.get('/register', (req, res) => {
+  res.render('register', { title: 'Register' });
 });
 
-// ----------------------
-// Start server
-// ----------------------
+// New post page
+app.get('/posts/new', (req, res) => {
+  res.render('new-post', { title: 'New Post' });
+});
+
+// Handle new post submit
+app.post('/posts', (req, res) => {
+  const { title, body } = req.body;
+  state.posts.push({ id: state.posts.length + 1, title, body });
+  res.redirect('/forum');
+});
+
+// ----- Start server -----
 app.listen(PORT, () => {
-  console.log(`Wild West Forum server listening on port ${PORT}`);
+  console.log(`Wild West Forum listening on port ${PORT}`);
 });
