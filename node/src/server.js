@@ -7,6 +7,13 @@ const hbs = require('hbs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const session = require('express-session');
+app.use(session({
+  secret: 'super secret key', 
+  resave: false,
+  saveUninitialized: false
+}));
+
 //handlebars
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
