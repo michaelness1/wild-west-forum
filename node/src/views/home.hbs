@@ -1,9 +1,34 @@
-{{!-- views/home.hbs --}}
-{{#if currentUser}}
-  <p>Welcome back, {{currentUser.username}}!</p>
-  <a href="/forum">Go to the forum</a>
-{{else}}
-  <h1>🤠 Wild West Forum</h1>
-  <a href="/register">Register</a> or
-  <a href="/login">Log in</a>
-{{/if}}
+{{!-- make home page one pull html doc --}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wild West Forum</title>
+
+  <!-- existing css file for desert background -->
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body style="
+  margin: 0;
+  min-height: 100vh;
+  background-image: url('/images/desert-wild-west.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: 'Trebuchet MS', sans-serif;
+  color: #fff;
+">
+  <div class="content">
+    <h1>🤠 Wild West Forum</h1>
+    <p>Welcome to the Wild West! Register or log in to join the discussion.</p>
+
+    <p>
+      <a href="/register">Register</a>
+      or
+      <a href="/login">Log in</a>
+    </p>
+  </div>
+</body>
+</html>
