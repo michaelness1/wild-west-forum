@@ -1,5 +1,9 @@
-{{!< main}}
-<section>
-  <h1>Wild West Forum 🤠</h1>
-  <p>Welcome to the Wild West Forum! Register or log in to post comments.</p>
-</section>
+{{!-- views/home.hbs --}}
+{{#if currentUser}}
+  <p>Welcome back, {{currentUser.username}}!</p>
+  <a href="/forum">Go to the forum</a>
+{{else}}
+  <h1>🤠 Wild West Forum</h1>
+  <a href="/register">Register</a> or
+  <a href="/login">Log in</a>
+{{/if}}

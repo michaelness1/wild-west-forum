@@ -1,20 +1,57 @@
 // node/src/state.js
-// ------------------------------------------------------------
-// This file acts as our “in-memory database.”
-// It stores all users, comments, and temporary sessions
-// while the app is running. When you restart the server,
-// everything here resets (on purpose).
-// ------------------------------------------------------------
 
-// A list of users who have registered (each has a username and password)
-export const users = [];
+// Super simple in-memory "database"
+const users = [];
+const posts = [];
 
-// A list of comments that users post on the site
-export const comments = [];
+// Helper to generate IDs
+let nextPostId = 1;
 
-// A simple key-value “map” to track active login sessions
-// Example: sessions.set("some-random-id", { user: "mike", createdAt: new Date() });
-export const sessions = new Map();
+function findUserByUsername(username) {
+  return users.find((u) => u.username === username);
+}
 
-// That’s it! Other files (like routes.js) will import these lists
-// and add, remove, or read data from them in memory.
+function createUser(username, password) {
+  if (findUserByUsername(username)) {
+    throw new Error('Username already taken');
+  }
+  const user = { username, password }; // plain text for class project
+  users.push(user);
+  return user;
+}
+
+function validateUser(username, password) {
+  const user = findUserByUsername(username);
+  if (!user) return null;
+  if (user.password !== password) return null;
+  return user;
+}
+
+function createPost(author, title, body) {
+  const post = {
+    id: String(nextPostId++),
+    author,
+    title,
+    body,
+    createdAt: new Date(),
+  };
+  posts.unshift(post); // newest first
+  return post;
+}
+
+function getAllPosts() {
+  return posts;
+}
+
+function getPostById(id) {
+  return posts.find((p) => p.id === String(id));
+}
+
+module.exports = {
+  createUser,
+  validateUser,
+  findUserByUsername,
+  createPost,
+  getAllPosts,
+  getPostById,
+};

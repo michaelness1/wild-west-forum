@@ -1,10 +1,19 @@
-{{!< main}}
-<h2>Login</h2>
+<h1>Log in</h1>
 
-{{#if error}}<p class="error">{{error}}</p>{{/if}}
+{{#if error}}
+  <p style="color:red">{{error}}</p>
+{{/if}}
 
-<form method="POST" action="/login">
-  <label>Username <input name="username" required></label>
-  <label>Password <input type="password" name="password" required></label>
-  <button type="submit">Login</button>
+<form method="post" action="/login">
+  <label>Username:
+    <input type="text" name="username" value="{{form.username}}">
+  </label>
+  <br>
+  <label>Password:
+    <input type="password" name="password">
+  </label>
+  <br>
+  <button type="submit">Log in</button>
 </form>
+
+<p>No account? <a href="/register">Register here</a></p>

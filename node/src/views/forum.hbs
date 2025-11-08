@@ -1,0 +1,25 @@
+<h1>Wild West Forum</h1>
+
+<p>Howdy, {{currentUser.username}}!</p>
+
+<form method="post" action="/logout">
+  <button type="submit">Log out</button>
+</form>
+
+<p><a href="/forum/new">Create a new post</a></p>
+
+{{#if posts.length}}
+  <ul>
+    {{#each posts}}
+      <li>
+        <a href="/forum/posts/{{this.id}}">
+          <strong>{{this.title}}</strong>
+        </a>
+        by {{this.author}}
+        <em>({{this.createdAt}})</em>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>No posts yet. Be the first to post!</p>
+{{/if}}

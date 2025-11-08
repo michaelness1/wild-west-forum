@@ -1,53 +1,42 @@
-// ------------------------------------------
-// Wild West Forum - Node.js Server
-// ------------------------------------------
+// node/src/server.js
+const path = require('path');
+const express = require('express');
+const session = require('express-session');
+const hbs = require('hbs');
 
-const express = require("express");
-const path = require("path");
+const routes = require('./routes');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+// ---------- View engine: HBS ----------
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
+
+// If you add partials (views/partials/header.hbs, etc.)
+hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 
 // ---------- Middleware ----------
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false })); // parse form data
 
-// ---------- Static Files ----------
-const publicDir = path.join(__dirname, "../public");
-app.use(express.static(publicDir));
+app.use(
+  session({
+    secret: 'wild-west-secret',
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// Put current user on res.locals so all templates can see it
+app.use((req, res, next) => {
+  res.locals.currentUser = req.session.user || null;
+  next();
+});
 
 // ---------- Routes ----------
-app.get("/", (req, res) => {
-  res.send(`
-    <html>
-      <head>
-        <title>Wild West Forum</title>
-        <style>
-          body { 
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #fdf6ec;
-            color: #3a2e1e;
-            text-align: center;
-            padding: 60px;
-          }
-          h1 { font-size: 2.5rem; }
-          p { font-size: 1.2rem; }
-        </style>
-      </head>
-      <body>
-        <h1>🤠 Wild West Forum</h1>
-        <p>Server is running on port ${PORT} and proxy-ready for Nginx.</p>
-      </body>
-    </html>
-  `);
-});
+app.use('/', routes);
 
-// Example API route (for later expansion)
-app.get("/api/hello", (req, res) => {
-  res.json({ message: "Howdy partner! The API is alive." });
-});
-
-// ---------- Start Server ----------
-app.listen(PORT, () => {
-  console.log(`✅ Wild West Forum running on http://localhost:${PORT}`);
+// ---------- Start server ----------
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`🤠 Wild West Forum listening on port ${port}`);
 });

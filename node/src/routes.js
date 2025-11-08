@@ -1,87 +1,135 @@
 // node/src/routes.js
-import express from 'express';
-import { users, comments, sessions } from './state.js';
-import { requireAuth } from './middleware.js';
-import { v4 as uuid } from 'uuid';
+const express = require('express');
+const {
+  createUser,
+  validateUser,
+  createPost,
+  getAllPosts,
+  getPostById,
+} = require('./state');
+
+const { requireLogin, requireLoggedOut } = require('./middleware');
 
 const router = express.Router();
 
-// Home page
+// ---------- Home ----------
 router.get('/', (req, res) => {
-  res.render('home', { layout: 'main', title: 'Home' });
+  // If logged in, send to forum; otherwise show simple landing page
+  if (req.session.user) {
+    return res.redirect('/forum');
+  }
+  res.render('home'); // views/home.hbs
 });
 
-// Register
-router.get('/register', (req, res) => {
-  res.render('register', { layout: 'main', title: 'Register' });
+// ---------- Register ----------
+router.get('/register', requireLoggedOut, (req, res) => {
+  res.render('register', { error: null, form: {} });
 });
 
-router.post('/register', (req, res) => {
-  const { username, password } = req.body;
-  if (users.find(u => u.username === username)) {
-    return res.status(400).render('register', {
-      layout: 'main', title: 'Register',
-      error: 'Username already taken.'
+router.post('/register', requireLoggedOut, (req, res) => {
+  const { username, password, confirm } = req.body;
+
+  const form = { username }; // for repopulating
+
+  if (!username || !password || !confirm) {
+    return res.render('register', {
+      error: 'Please fill out all fields.',
+      form,
     });
   }
-  users.push({ username, password }); // insecure on purpose
-  res.redirect('/login');
-});
 
-// Login
-router.get('/login', (req, res) => {
-  res.render('login', { layout: 'main', title: 'Login' });
-});
-
-router.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  const found = users.find(u => u.username === username && u.password === password);
-  if (!found) {
-    return res.status(401).render('login', {
-      layout: 'main', title: 'Login',
-      error: 'Invalid username or password.'
+  if (password !== confirm) {
+    return res.render('register', {
+      error: 'Passwords do not match.',
+      form,
     });
   }
-  const sid = uuid();
-  sessions.set(sid, { user: username, createdAt: new Date() });
-  res.cookie('loggedIn', 'true');
-  res.cookie('user', username);
-  res.cookie('sid', sid);
-  req.session.user = username;
-  res.redirect('/comments');
+
+  try {
+    const user = createUser(username, password);
+    req.session.user = { username: user.username };
+    res.redirect('/forum');
+  } catch (err) {
+    return res.render('register', {
+      error: err.message,
+      form,
+    });
+  }
 });
 
-// Logout
-router.post('/logout', (req, res) => {
-  const sid = req.cookies?.sid;
-  if (sid) sessions.delete(sid);
-  res.clearCookie('loggedIn'); res.clearCookie('user'); res.clearCookie('sid');
-  req.session.destroy(() => res.redirect('/'));
+// ---------- Login ----------
+router.get('/login', requireLoggedOut, (req, res) => {
+  res.render('login', { error: null, form: {} });
 });
 
-// Comments list
-router.get('/comments', (req, res) => {
-  res.render('comments', {
-    layout: 'main', title: 'Comments',
-    comments: comments.map(c => ({ ...c, createdAt: c.createdAt.toLocaleString() }))
+router.post('/login', requireLoggedOut, (req, res) => {
+  const { username, password } = req.body;
+  const form = { username };
+
+  if (!username || !password) {
+    return res.render('login', {
+      error: 'Please enter username and password.',
+      form,
+    });
+  }
+
+  const user = validateUser(username, password);
+
+  if (!user) {
+    return res.render('login', {
+      error: 'Invalid username or password.',
+      form,
+    });
+  }
+
+  req.session.user = { username: user.username };
+  res.redirect('/forum');
+});
+
+// ---------- Logout ----------
+router.post('/logout', requireLogin, (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/');
   });
 });
 
-// New comment (protected)
-router.get('/comment/new', requireAuth, (req, res) => {
-  res.render('new-comment', { layout: 'main', title: 'New Comment' });
+// ---------- Forum (list posts) ----------
+router.get('/forum', requireLogin, (req, res) => {
+  const posts = getAllPosts();
+  res.render('forum', {
+    posts,
+  });
 });
 
-router.post('/comment', requireAuth, (req, res) => {
-  const text = (req.body?.text || '').toString();
-  if (!text.trim()) {
-    return res.status(400).render('new-comment', {
-      layout: 'main', title: 'New Comment',
-      error: 'Comment cannot be empty.'
+// ---------- New Post ----------
+router.get('/forum/new', requireLogin, (req, res) => {
+  res.render('new-post', { error: null, form: {} });
+});
+
+router.post('/forum/new', requireLogin, (req, res) => {
+  const { title, body } = req.body;
+  const form = { title, body };
+
+  if (!title || !body) {
+    return res.render('new-post', {
+      error: 'Please enter both a title and some content.',
+      form,
     });
   }
-  comments.push({ author: req.session.user, text, createdAt: new Date() });
-  res.redirect('/comments');
+
+  const author = req.session.user.username;
+  const post = createPost(author, title, body);
+  res.redirect(`/forum/posts/${post.id}`);
 });
 
-export default router;
+// ---------- View Single Post ----------
+router.get('/forum/posts/:id', requireLogin, (req, res) => {
+  const post = getPostById(req.params.id);
+  if (!post) {
+    return res.status(404).render('post-not-found'); // optional template
+  }
+
+  res.render('post', { post });
+});
+
+module.exports = router;
