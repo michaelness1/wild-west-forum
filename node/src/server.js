@@ -1,25 +1,26 @@
-// node/src/server.js
-const path = require('path');
+// src/server.js
+
 const express = require('express');
-const session = require('express-session');
+const path = require('path');
 const hbs = require('hbs');
+const session = require('express-session');
 
-app.use(express.static(__dirname + 'public/'));
+const routes = require('./routes');   // your routes.js
+const state = require('./state');     // if you're using this
+const { requireAuth } = require('./middleware'); // if needed
 
-const routes = require('./routes');
-
+// ❗ Create the app FIRST
 const app = express();
 
-// ---------- View engine: HBS ----------
-app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'views'));
+// ---------- Middleware & static files ----------
 
-// If you add partials (views/partials/header.hbs, etc.)
-hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
+// Serve static files from /public
+app.use(express.static(path.join(__dirname, '../public')));
 
-// ---------- Middleware ----------
-app.use(express.urlencoded({ extended: false })); // parse form data
+// Body parsing
+app.use(express.urlencoded({ extended: true }));
 
+// Sessions (if you're using them)
 app.use(
   session({
     secret: 'wild-west-secret',
@@ -28,17 +29,26 @@ app.use(
   })
 );
 
-// Put current user on res.locals so all templates can see it
-app.use((req, res, next) => {
-  res.locals.currentUser = req.session.user || null;
-  next();
-});
+// ---------- View engine (hbs) ----------
+
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
+
+// if you have layouts/partials:
+hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 
 // ---------- Routes ----------
+
 app.use('/', routes);
 
+// Simple 404
+app.use((req, res) => {
+  res.status(404).render('404', { title: 'Not Found' });
+});
+
 // ---------- Start server ----------
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`🤠 Wild West Forum listening on port ${port}`);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Wild West Forum listening on port ${PORT}`);
 });
