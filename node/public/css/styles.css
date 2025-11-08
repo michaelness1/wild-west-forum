@@ -1,0 +1,106 @@
+/* node/public/css/styles.css */
+/* -------------------------------------------------------
+   Simple, clean layout for the Wild West Forum
+   ------------------------------------------------------- */
+
+:root {
+  font-family: system-ui, Arial, sans-serif;
+  background-color: #f9fafb;
+  color: #111;
+}
+
+body {
+  margin: 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Navigation bar */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 0.75rem 1rem;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #0366d6;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+/* Logged-in pill */
+.pill {
+  margin-left: auto;
+  background: #eee;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+/* Error text */
+.error {
+  color: #b10;
+}
+
+/* Comment list */
+.comments {
+  list-style: none;
+  padding: 0;
+}
+
+.comments li {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.meta {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+/* Forms */
+label {
+  display: block;
+  margin: 0.5rem 0;
+}
+
+input,
+textarea,
+button {
+  font-size: 1rem;
+}
+
+button {
+  cursor: pointer;
+  background: #0366d6;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+button:hover {
+  background: #024a9b;
+}

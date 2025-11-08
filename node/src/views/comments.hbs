@@ -1,0 +1,17 @@
+{{!< main}}
+<h2>Comments</h2>
+
+{{#if error}}<p class="error">{{error}}</p>{{/if}}
+
+{{#if comments.length}}
+  <ul class="comments">
+    {{#each comments}}
+      <li>
+        <div class="meta">{{author}} — {{createdAt}}</div>
+        <div class="text">{{text}}</div>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>No comments yet. Be the first to post!</p>
+{{/if}}
