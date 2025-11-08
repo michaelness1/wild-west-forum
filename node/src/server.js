@@ -9,13 +9,14 @@ const routes = require('./routes');   // your routes.js
 const state = require('./state');     // if you're using this
 const { requireAuth } = require('./middleware'); // if needed
 
-// ❗ Create the app FIRST
+//  Create the app FIRST
 const app = express();
 
 // ---------- Middleware & static files ----------
 
 // Serve static files from /public
 app.use(express.static(path.join(__dirname, '../public')));
+
 
 // Body parsing
 app.use(express.urlencoded({ extended: true }));
