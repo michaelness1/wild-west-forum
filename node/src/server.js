@@ -15,7 +15,7 @@ const app = express();
 // ---------- Middleware & static files ----------
 
 // Serve static files from /public
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 // Body parsing
