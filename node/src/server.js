@@ -41,6 +41,7 @@ app.get('/', (req, res) => {
 app.get('/forum', (req, res) => {
   res.render('forum', {
     title: 'Forum',
+    username: req.session.username, //show user
     posts: state.posts
   });
 });
@@ -72,6 +73,7 @@ app.get('/register', (req, res) => {
 
 app.post('/register',(req,res) => {
   const { username, password} = req.body;
+  state.users.push({username, password });
 
   if (!username || !password) {
     return res.send("Username and password are required!");
@@ -96,8 +98,22 @@ app.get('/posts/new', (req, res) => {
 //Handle new post submit
 app.post('/posts', (req, res) => {
   const { title, body } = req.body;
-  state.posts.push({ id: state.posts.length + 1, title, body });
+  state.posts.push({ id: state.posts.length + 1, title, body, author });
   res.redirect('/forum');
+});
+
+app.get('/posts/:id', (req,res) => {
+  const id = parseInt(req.params.id, 10);
+  const post = state.posts.find(p => p.id == id);
+
+  if (!post) {
+    return res.status(404).send('Post not found');
+  }
+  res.render('post', {
+    title: post.title,
+    username: req.session.username,
+    post
+  });
 });
 
 //start server
