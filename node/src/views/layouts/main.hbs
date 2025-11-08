@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>{{title}} | Wild West Forum</title>
-  <link rel="stylesheet" href="/css/styles.css" />
-</head>
-<body>
-  {{> nav}}
-  <main class="container">
-    {{{ body }}}
-  </main>
-  {{> footer}}
-</body>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Wild West Forum</title>
+    <style>
+      body {
+        background-image: url('/images/desert.png');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+        color: #fff;
+        font-family: 'Trebuchet MS', sans-serif;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+      }
+      .content {
+        background: rgba(0,0,0,0.5);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      {{{body}}}
+    </div>
+  </body>
 </html>

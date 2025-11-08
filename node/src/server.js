@@ -4,6 +4,8 @@ const express = require('express');
 const session = require('express-session');
 const hbs = require('hbs');
 
+app.use(express.static(__dirname + 'public/'));
+
 const routes = require('./routes');
 
 const app = express();
