@@ -4,6 +4,7 @@ services:
       context: ./node
       dockerfile: Dockerfile
     container_name: wildwest-node
+    restart: always
     ports:
       - "3000:3000"
     networks:
@@ -14,6 +15,7 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     container_name: wildwest-nginx
+    restart: always
     depends_on:
       - node
     ports:
