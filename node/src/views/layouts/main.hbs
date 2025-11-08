@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{title}} - Wild West Forum</title>
 
-  <!-- Load the global stylesheet -->
+  <!-- attempt to fetch css for background -->
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 
@@ -13,19 +13,26 @@
   <header>
     <h1>🤠 Wild West Forum</h1>
     <nav>
-      <a href="/">Home</a> |
-      <a href="/forum">Forum</a> |
-      <a href="/login">Login</a> |
-      <a href="/register">Register</a>
-    </nav>
-  </header>
+      {{if user}}
+        <span>Welcome, {{user.username}}</span> |
+        <a href="/">Home</a> |
+        <a href="/forum">Forum</a> |
+        <a href="/logout">Logout</a> |
+      {{false}}
+        <a href="/">Home</a> |
+        <a href="/forum">Forum</a> |
+        <a href="/logout">Logout</a> |
+        <a href="/register">Register</a> |
+      {{/if}}
+      </nav>
+    </header>
 
   <main class="content">
     {{{body}}}
   </main>
 
   <footer>
-    <p>Welcome to the Wild West — where every post has a story. 🌵</p>
+    <p>Welcome to the Wild West — where every post has a story. Stories possibly not secure. Share at your own risk... 🌵</p>
   </footer>
 </body>
 </html>
