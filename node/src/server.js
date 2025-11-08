@@ -67,7 +67,7 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 
-app.post('register',(req,res) => {
+app.post('/register',(req,res) => {
   const { username, password} = req.body;
 
   if (!username || !password) {
