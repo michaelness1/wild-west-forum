@@ -47,9 +47,35 @@ app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
 
+app.post('/login', (req,res) => {
+  const {username, password } = req.body;
+
+  const user = users.find(
+    (u)  => u.username === username && u.password === password
+  );
+
+  if (!user) {
+    return res.send("invalid username or password");
+  }
+
+  //redirect user
+  res.redirect('/forum');
+});
+
 //Register page
 app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
+});
+
+app.post('register',(req,res) => {
+  const { username, password} = req.body;
+
+  if (!username || !password) {
+    return res.send("Username and password are required!");
+  }
+
+  users.push({username, password});
+  res.redirect('/login');
 });
 
 //add logout page
