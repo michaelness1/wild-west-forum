@@ -24,6 +24,9 @@ const state = {
   comments: []
 };
 
+const users = state.users;
+//fix errors after registering, users is not defined 
+
 //Routes
 
 //Home page
