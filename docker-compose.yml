@@ -10,14 +10,14 @@ services:
       - wildwest-net
 
   nginx:
-    image: nginx:1.27-alpine
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     container_name: wildwest-nginx
-    ports:
-      - "8087:80"     # You can change this to 8028 if you prefer
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - node
+    ports:
+      - "8087:80"   # so you'll hit http://YOUR-IP:8087
     networks:
       - wildwest-net
 
