@@ -2,17 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Wild West Forum</title>
+    <title>{{#if title}}{{title}} | {{/if}}Wild West Forum</title>
 
-    {{!-- Link to the static CSS file in /public/css/styles.css --}}
+    {{!-- Load the global stylesheet from /public/css/styles.css --}}
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
 
-  {{!-- wildwest-bg gives us the desert background from CSS --}}
+  {{!-- wildwest-bg class will add the desert background from CSS --}}
   <body class="wildwest-bg">
     <header class="site-header">
       <h1>🤠 Wild West Forum</h1>
-      <nav>
+
+      <nav class="site-nav">
         <a href="/">Home</a>
         <a href="/forum">Forum</a>
         <a href="/posts/new">New Post</a>
@@ -26,7 +27,7 @@
     </main>
 
     <footer class="site-footer">
-      <p>Built for COS 498 – Midterm Project.</p>
+      <p>Built for COS 498 – Wild West Forum.</p>
     </footer>
   </body>
 </html>
