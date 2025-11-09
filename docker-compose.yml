@@ -19,7 +19,7 @@ services:
     depends_on:
       - node
     ports:
-      - "8087:80"   # so you'll hit http://YOUR-IP:8087
+      - "8087:80"
     networks:
       - wildwest-net
 
