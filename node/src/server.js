@@ -130,9 +130,14 @@ app.get('/forum/posts/:id', (req, res) => {
   if (!post) {
     return res.status(404).send('Post not found');
   }
+  res.render('post', {
+    title: post.title,
+    username: req.session.username,
+    post
+  });
+});
 
 //start server
 app.listen(PORT, () => {
   console.log(`Wild West Forum listening on port ${PORT}`);
-  });
 });
