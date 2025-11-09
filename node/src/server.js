@@ -104,6 +104,7 @@ app.get('/posts/new', (req, res) => {
 //Handle new post submit
 app.post('/posts', (req, res) => {
   const { title, body } = req.body;
+  const author = (req.session && req.session.username) || 'Anonymous'; 
   state.posts.push({ id: state.posts.length + 1, title, body, author });
   res.redirect('/forum');
 });
